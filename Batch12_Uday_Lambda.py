@@ -6,8 +6,6 @@ client = boto3.client('dynamodb')
 dynamodb = boto3.resource('dynamodb')
 TABLE_NAME = 'batch12_uday_inventory_update'
 
-
-
 def lambda_handler(event, context):
     print('event:', event)
     body = event.get('body')
@@ -18,7 +16,6 @@ def lambda_handler(event, context):
         }
     print('body: ', body)
     inventory = json.loads(body);
-    #inventory =body;
     
     # Store data in DynamoDB
     inventoryUpdateTable = dynamodb.Table(TABLE_NAME)
