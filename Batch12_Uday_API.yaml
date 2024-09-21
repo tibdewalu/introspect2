@@ -1,0 +1,172 @@
+openapi: 3.0.0
+info:
+  title: Batch12_Uday_API
+  description: API for managing inventory updates and retrieval of item/stok
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /inventory:  
+    post:
+      tags:
+        - createInventory
+      summary: create Inventory item/stock
+      description: create an item in the inventory.
+      operationId: createInventory
+      requestBody:
+        required: true
+        content:
+         application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '200':
+          description: Inventory created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Inventory created successfully"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 code:
+                   type: string
+                   example: "400"
+                 message:
+                  type: string
+                  example: "provide valid information for inventory item creation"
+                 details:
+                  type: string
+                  example: "provide valid information for inventory item creation"
+       
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 code:
+                   type: string
+                   example: "500"
+                 message:
+                  type: string
+                  example: "internal server error"
+                 details:
+                  type: string
+                  example: "error during inventory creation due to down stream service issue"
+          
+  /inventory/{product_id}:
+    get:
+      tags:
+        - getInventory
+      summary: Retrieve specfic item/Stock using product_id
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          description: product_id of the item/Stock
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful retrieved the inventory item/stock
+          content:
+             application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+        '404':
+          description: Item not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 code:
+                   type: string
+                   example: "404"
+                 message:
+                  type: string
+                  example: "could not find the item details for the provided product_id"
+                 details:
+                  type: string
+                  example: "product_id is not found in system , make sure ot provide valid one"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 code:
+                   type: string
+                   example: "500"
+                 message:
+                  type: string
+                  example: "error while retrieving the items details"
+                 details:
+                  type: string
+                  example: "error while retrieving the items details"
+  /inventory/all:
+    get:
+      tags:
+        - getAllInventory
+      summary: Retrieve specfic stock using product_id
+      responses:
+        '200':
+          description: Successful retrieval of inventory item
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                 code:
+                   type: string
+                   example: "5005"
+                 message:
+                  type: string
+                  example: "error while retriving the all the item details"
+                 details:
+                  type: string
+                  example: "error while retriving the items details due to downstream issue"
+components:
+  schemas:
+    InventoryItem:
+      type: object
+      properties:
+        product_id:
+          type: string
+          example: "123"
+        quantity:
+          type: integer
+          example: 100
+        timestamp:
+          type: string
+          format: date-time
+          example: "2023-10-12T16:30:00Z"
+        location:
+          type: string
+          example: "wareHouse A"
+      required:
+        - product_id
+        - quantity
+        - location
